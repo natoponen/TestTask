@@ -5,6 +5,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.File;
+import java.util.concurrent.CompletableFuture;
 
 @Controller
 @RequestMapping("/import")
@@ -17,8 +18,8 @@ public class ImportController {
     }
 
     @PostMapping("")
-    public void importFromXls (@RequestBody File file) {
-        service.importFromXsl(file);
+    public CompletableFuture<Long> importFromXls (@RequestBody File file) {
+        return service.importFromXsl(file);
     }
 
     @GetMapping("/{id}")

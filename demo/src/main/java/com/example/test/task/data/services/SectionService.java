@@ -9,6 +9,7 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.AsyncResult;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
@@ -16,6 +17,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 @Service
@@ -82,7 +85,7 @@ public class SectionService implements SectionsService{
 
     @Override
     @Async
-    public void importFromXsl(File file) {
+    public CompletableFuture<Long> importFromXsl(File file) {
         HSSFWorkbook workbook;
         try (InputStream inputStream = new FileInputStream(file)) {
             workbook = new HSSFWorkbook(inputStream);
@@ -110,16 +113,18 @@ public class SectionService implements SectionsService{
         } catch (IOException e) {
             e.printStackTrace();
         }
+        return CompletableFuture.completedFuture(Thread.currentThread().getId());
     }
 
     @Override
     public String importingProgress (Long id) {
+        
         return "PROGRESS";
     }
 
     @Override
     @Async
-    public Future<Long> exportToXsl() {
+    public CompletableFuture<Long> exportToXsl() {
         HSSFWorkbook workbook = new HSSFWorkbook();
         HSSFSheet sheet = workbook.createSheet();
 
@@ -159,7 +164,7 @@ public class SectionService implements SectionsService{
 
         try (FileOutputStream outputStream = new FileOutputStream("Sections.xls")) {
             workbook.write(outputStream);
-            return new AsyncResult<Long>(Thread.currentThread().getId());
+            return CompletableFuture.completedFuture(Thread.currentThread().getId());
         } catch (IOException e) {
             e.printStackTrace();
             return null;

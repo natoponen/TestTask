@@ -6,8 +6,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
+import java.util.concurrent.CompletableFuture;
 
 @RestController
 @RequestMapping("/export")
@@ -19,16 +18,8 @@ public class ExportController {
     }
 
     @GetMapping("")
-    public long exportToXls() {
-        Future<Long> id = service.exportToXsl();
-        try {
-            return id.get();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }
-        return 0L;
+    public CompletableFuture<Long> exportToXls() {
+        return service.exportToXsl();
     }
 
     @GetMapping("/{id}")
