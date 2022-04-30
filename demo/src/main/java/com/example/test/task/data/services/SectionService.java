@@ -2,7 +2,6 @@ package com.example.test.task.data.services;
 
 import com.example.test.task.data.models.GeologicalClass;
 import com.example.test.task.data.models.Section;
-import com.example.test.task.data.repositories.GeoClassRepository;
 import com.example.test.task.data.repositories.SectionRepository;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -23,11 +22,9 @@ import java.util.concurrent.Future;
 public class SectionService implements SectionsService{
 
     private final SectionRepository sectionRepository;
-    private final GeoClassRepository geoClassRepository;
 
-    public SectionService(SectionRepository sectionRepository, GeoClassRepository geoClassRepository) {
+    public SectionService(SectionRepository sectionRepository) {
         this.sectionRepository = sectionRepository;
-        this.geoClassRepository = geoClassRepository;
     }
 
     @Override
