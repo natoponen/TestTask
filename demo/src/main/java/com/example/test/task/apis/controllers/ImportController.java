@@ -1,29 +1,33 @@
 package com.example.test.task.apis.controllers;
 
+import com.example.test.task.data.services.ImportService;
 import com.example.test.task.data.services.SectionService;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.File;
-import java.util.concurrent.CompletableFuture;
 
 @Controller
 @RequestMapping("/import")
 public class ImportController {
 
-    private final SectionService service;
+    private final ImportService importService;
+    private final SectionService sectionService;
 
-    public ImportController(SectionService service) {
-        this.service = service;
+    public ImportController(ImportService importService, SectionService sectionService) {
+        this.importService = importService;
+        this.sectionService = sectionService;
     }
 
+
     @PostMapping("")
-    public CompletableFuture<Long> importFromXls (@RequestBody File file) {
-        return service.importFromXsl(file);
+    public Long importFromXls (@RequestBody File file) {
+        importService.importFromXsl(file);
+        return 0L;
     }
 
     @GetMapping("/{id}")
-    public String importingProgress(@PathVariable("id") long id) {
-        return service.importingProgress(id);
+    public String importProgress(@PathVariable("id") Long id) {
+        return sectionService.importExportProgress(id);
     }
 }

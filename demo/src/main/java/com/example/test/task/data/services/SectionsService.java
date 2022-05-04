@@ -3,9 +3,9 @@ package com.example.test.task.data.services;
 import com.example.test.task.data.models.Section;
 
 import java.io.File;
+import java.io.OutputStream;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Future;
 
 public interface SectionsService {
 
@@ -21,11 +21,7 @@ public interface SectionsService {
 
     List<Section> containGeoClassByCode(String code);
 
-    CompletableFuture<Long> importFromXsl(File file);
+    CompletableFuture<OutputStream> exportToXls();
 
-    String importingProgress(Long id);
-
-    CompletableFuture<Long> exportToXsl();
-
-    String exportingProgress(Long id);
+    String importExportProgress(Long id);
 }

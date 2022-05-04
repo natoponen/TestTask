@@ -8,18 +8,11 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.springframework.scheduling.annotation.Async;
-import org.springframework.scheduling.annotation.AsyncResult;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 
 @Service
 public class SectionService implements SectionsService{
@@ -85,46 +78,7 @@ public class SectionService implements SectionsService{
 
     @Override
     @Async
-    public CompletableFuture<Long> importFromXsl(File file) {
-        HSSFWorkbook workbook;
-        try (InputStream inputStream = new FileInputStream(file)) {
-            workbook = new HSSFWorkbook(inputStream);
-            HSSFSheet sheet = workbook.getSheetAt(0);
-            Iterator<Row> it = sheet.iterator();
-            it.next(); //Skip headers row
-
-            while (it.hasNext()) {
-                Section anotherSection = new Section();
-
-                Row row = it.next();
-                Iterator<Cell> cells = row.iterator();
-
-                anotherSection.setName(cells.next().getStringCellValue());
-
-                while (cells.hasNext()) {
-                    Cell geoClassName = cells.next();
-                    Cell geoClassCode = cells.next();
-                    anotherSection.addGeoClass(geoClassName.getStringCellValue(),
-                            geoClassCode.getStringCellValue());
-
-                }
-                sectionRepository.save(anotherSection);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return CompletableFuture.completedFuture(Thread.currentThread().getId());
-    }
-
-    @Override
-    public String importingProgress (Long id) {
-        
-        return "PROGRESS";
-    }
-
-    @Override
-    @Async
-    public CompletableFuture<Long> exportToXsl() {
+    public CompletableFuture<OutputStream> exportToXls() {
         HSSFWorkbook workbook = new HSSFWorkbook();
         HSSFSheet sheet = workbook.createSheet();
 
@@ -164,7 +118,7 @@ public class SectionService implements SectionsService{
 
         try (FileOutputStream outputStream = new FileOutputStream("Sections.xls")) {
             workbook.write(outputStream);
-            return CompletableFuture.completedFuture(Thread.currentThread().getId());
+            return CompletableFuture.completedFuture(outputStream);
         } catch (IOException e) {
             e.printStackTrace();
             return null;
@@ -172,7 +126,21 @@ public class SectionService implements SectionsService{
     }
 
     @Override
-    public String exportingProgress(Long id) {
-        return "PROGRESS";
+    public String importExportProgress(Long id) {
+        Set<Thread> threads = Thread.getAllStackTraces().keySet();
+        for (Thread thread: threads) {
+            if (id.equals(thread.getId())) {
+                Thread.State threadState = thread.getState();
+                switch (threadState) {
+                    case TERMINATED:
+                        return "DONE";
+                    case RUNNABLE:
+                        return "IN PROGRESS";
+                    default:
+                        return "ERROR";
+                }
+            }
+        }
+        return "No job with such ID";
     }
 }
