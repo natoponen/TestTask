@@ -1,8 +1,8 @@
-package com.example.test.task.data.services;
+package com.example.test.task.data.service;
 
-import com.example.test.task.data.models.GeologicalClass;
-import com.example.test.task.data.models.Section;
-import com.example.test.task.data.repositories.SectionRepository;
+import com.example.test.task.data.model.GeologicalClass;
+import com.example.test.task.data.model.Sections;
+import com.example.test.task.data.reposity.SectionsRepository;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
@@ -17,32 +17,32 @@ import java.util.concurrent.CompletableFuture;
 @Service
 public class SectionService implements SectionsService{
 
-    private final SectionRepository sectionRepository;
+    private final SectionsRepository sectionsRepository;
 
-    public SectionService(SectionRepository sectionRepository) {
-        this.sectionRepository = sectionRepository;
+    public SectionService(SectionsRepository sectionsRepository) {
+        this.sectionsRepository = sectionsRepository;
     }
 
     @Override
-    public List<Section> findAllSections() {
-        return sectionRepository.findAll();
+    public List<Sections> findAllSections() {
+        return sectionsRepository.findAll();
     }
 
     @Override
-    public Section findById(long id) {
-        Optional<Section> res = sectionRepository.findById(id);
+    public Sections findById(long id) {
+        Optional<Sections> res = sectionsRepository.findById(id);
         return res.orElse(null);
     }
 
     @Override
-    public Section insert(Section section) {
-        return sectionRepository.save(section);
+    public Sections insert(Sections sections) {
+        return sectionsRepository.save(sections);
     }
 
     @Override
     public boolean delete(long id) {
         try {
-            sectionRepository.deleteById(id);
+            sectionsRepository.deleteById(id);
             return true;
         } catch (Exception e) {
             return false;
@@ -50,9 +50,9 @@ public class SectionService implements SectionsService{
     }
 
     @Override
-    public boolean update(Section section) {
+    public boolean update(Sections sections) {
         try {
-            sectionRepository.save(section);
+            sectionsRepository.save(sections);
             return true;
         } catch (Exception e) {
             return false;
@@ -60,12 +60,12 @@ public class SectionService implements SectionsService{
     }
 
     @Override
-    public List<Section> containGeoClassByCode(String code) {
-        List<Section> result = new ArrayList<>();
-        for (Section section: findAllSections()) {
-            for (GeologicalClass gc: section.getGeologicalClasses()) {
+    public List<Sections> containGeoClassByCode(String code) {
+        List<Sections> result = new ArrayList<>();
+        for (Sections sections : findAllSections()) {
+            for (GeologicalClass gc: sections.getGeologicalClasses()) {
                 if (gc.getCode().equals(code)) {
-                    result.add(section);
+                    result.add(sections);
                 }
             }
         }
@@ -88,9 +88,9 @@ public class SectionService implements SectionsService{
         headerSectionCell.setCellValue("Section name");
         int headerColumnCount = 1;
         int maxNumberOfGeoClasses = findById(1L).getGeologicalClasses().size();
-        for (Section section: findAllSections()) {
-            if (section.getGeologicalClasses().size()>maxNumberOfGeoClasses) {
-                maxNumberOfGeoClasses = section.getGeologicalClasses().size();
+        for (Sections sections : findAllSections()) {
+            if (sections.getGeologicalClasses().size()>maxNumberOfGeoClasses) {
+                maxNumberOfGeoClasses = sections.getGeologicalClasses().size();
             }
         }
         for (int i=0; i<maxNumberOfGeoClasses; i++) {
@@ -103,12 +103,12 @@ public class SectionService implements SectionsService{
         int rowCount = 1;
 
         // Filling in the data
-        for (Section section: findAllSections()) {
+        for (Sections sections : findAllSections()) {
             Row row = sheet.createRow(++rowCount);
             Cell sectionNameCell = row.createCell(1);
-            sectionNameCell.setCellValue(section.getName());
+            sectionNameCell.setCellValue(sections.getName());
             int columnCount = 1;
-            for (GeologicalClass geologicalClass: section.getGeologicalClasses()) {
+            for (GeologicalClass geologicalClass: sections.getGeologicalClasses()) {
                 Cell geoClassNameCell = row.createCell(++columnCount);
                 geoClassNameCell.setCellValue(geologicalClass.getName());
                 Cell geoClassCodeCell = row.createCell(++columnCount);

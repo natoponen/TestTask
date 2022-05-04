@@ -1,7 +1,7 @@
-package com.example.test.task.data.services;
+package com.example.test.task.data.service;
 
-import com.example.test.task.data.models.Section;
-import com.example.test.task.data.repositories.SectionRepository;
+import com.example.test.task.data.model.Sections;
+import com.example.test.task.data.reposity.SectionsRepository;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
@@ -19,10 +19,10 @@ import java.util.concurrent.CompletableFuture;
 @Service
 public class ImportService {
 
-    private final SectionRepository sectionRepository;
+    private final SectionsRepository sectionsRepository;
 
-    public ImportService(SectionRepository sectionRepository) {
-        this.sectionRepository = sectionRepository;
+    public ImportService(SectionsRepository sectionsRepository) {
+        this.sectionsRepository = sectionsRepository;
     }
 
     @Async
@@ -35,20 +35,20 @@ public class ImportService {
             it.next(); //Skip headers row
 
             while (it.hasNext()) {
-                Section anotherSection = new Section();
+                Sections anotherSections = new Sections();
 
                 Row row = it.next();
                 Iterator<Cell> cells = row.iterator();
 
-                anotherSection.setName(cells.next().getStringCellValue());
+                anotherSections.setName(cells.next().getStringCellValue());
 
                 while (cells.hasNext()) {
                     Cell geoClassName = cells.next();
                     Cell geoClassCode = cells.next();
-                    anotherSection.addGeoClass(geoClassName.getStringCellValue(),
+                    anotherSections.addGeoClass(geoClassName.getStringCellValue(),
                             geoClassCode.getStringCellValue());
                 }
-                sectionRepository.save(anotherSection);
+                sectionsRepository.save(anotherSections);
             }
         } catch (IOException e) {
             e.printStackTrace();

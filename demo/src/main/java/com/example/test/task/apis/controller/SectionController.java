@@ -1,7 +1,8 @@
-package com.example.test.task.apis.controllers;
+package com.example.test.task.apis.controller;
 
-import com.example.test.task.data.models.Section;
-import com.example.test.task.data.services.SectionService;
+import com.example.test.task.data.model.Sections;
+import com.example.test.task.data.service.SectionService;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -12,26 +13,25 @@ public class SectionController {
 
     private final SectionService service;
 
-
     public SectionController(SectionService service) {
         this.service = service;
     }
 
-
     @GetMapping("")
-    public List<Section> findAll() {
+    public List<Sections> findAll() {
         return service.findAllSections();
     }
 
     @GetMapping("/{id}")
-    public Section findById(@PathVariable("id") long id) {
+    public Sections findById(@PathVariable("id") long id) {
         return service.findById(id);
     }
 
-    @PostMapping("")
-    public Section insert(@RequestBody Section section) {
-        if (section != null) {
-            return service.insert(section);
+    @ResponseStatus(HttpStatus.CREATED)
+    @PostMapping("/create")
+    public Sections insert(@RequestBody Sections sections) {
+        if (sections != null) {
+            return service.insert(sections);
         } else {
             return null;
         }
@@ -51,12 +51,12 @@ public class SectionController {
     }
 
     @PutMapping("")
-    public String update(@RequestBody Section section) {
-        if (section != null) {
-            if (service.update(section)) {
-                return "Updated section "+section.getId();
+    public String update(@RequestBody Sections sections) {
+        if (sections != null) {
+            if (service.update(sections)) {
+                return "Updated section "+ sections.getId();
             } else {
-                return "Unable to update section "+section.getId();
+                return "Unable to update section "+ sections.getId();
             }
         } else {
             return "Request body is empty";
@@ -64,7 +64,7 @@ public class SectionController {
     }
 
     @GetMapping("/by-code")
-    public List<Section> sectionsByCode(@RequestParam(value = "code") String code) {
+    public List<Sections> sectionsByCode(@RequestParam(value = "code") String code) {
         return service.containGeoClassByCode(code);
     }
 }

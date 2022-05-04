@@ -1,7 +1,7 @@
-package com.example.test.task.apis.controllers;
+package com.example.test.task.apis.controller;
 
-import com.example.test.task.data.services.ImportService;
-import com.example.test.task.data.services.SectionService;
+import com.example.test.task.data.service.ImportService;
+import com.example.test.task.data.service.SectionService;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 

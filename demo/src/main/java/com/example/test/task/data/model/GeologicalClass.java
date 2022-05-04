@@ -1,4 +1,4 @@
-package com.example.test.task.data.models;
+package com.example.test.task.data.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

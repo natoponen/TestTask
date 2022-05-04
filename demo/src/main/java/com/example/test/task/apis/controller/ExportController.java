@@ -1,6 +1,6 @@
-package com.example.test.task.apis.controllers;
+package com.example.test.task.apis.controller;
 
-import com.example.test.task.data.services.SectionService;
+import com.example.test.task.data.service.SectionService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,7 +31,7 @@ public class ExportController {
     }
 
     @GetMapping("/{id}/file")
-    public void exportFileById(Long id) {
+    public void exportFileById(@PathVariable("id") Long id) {
         service.exportToXls();
     }
 }

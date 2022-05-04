@@ -1,4 +1,4 @@
-package com.example.test.task.data.models;
+package com.example.test.task.data.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -14,7 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 @Setter
-public class Section {
+public class Sections {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
