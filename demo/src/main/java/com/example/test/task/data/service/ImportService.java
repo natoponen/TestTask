@@ -1,6 +1,8 @@
 package com.example.test.task.data.service;
 
-import com.example.test.task.data.model.Sections;
+import com.example.test.task.data.model.entity.JobEntity;
+import com.example.test.task.data.model.entity.SectionEntity;
+import com.example.test.task.data.reposity.JobsRepository;
 import com.example.test.task.data.reposity.SectionsRepository;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -13,20 +15,38 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.time.LocalDateTime;
 import java.util.Iterator;
-import java.util.concurrent.CompletableFuture;
 
 @Service
-public class ImportService {
+public class ImportService implements ImportingService{
 
     private final SectionsRepository sectionsRepository;
+    private final JobsRepository jobsRepository;
 
-    public ImportService(SectionsRepository sectionsRepository) {
+    public ImportService(SectionsRepository sectionsRepository, JobsRepository jobsRepository) {
         this.sectionsRepository = sectionsRepository;
+        this.jobsRepository = jobsRepository;
     }
 
+    @Override
+    public Long startImport(File file) {
+        JobEntity job = new JobEntity();
+        job.setType("import");
+        job.setFile(null);
+        jobsRepository.save(job);
+        Long id = job.getId();
+        importFromXsl(file, id);
+        return id;
+    }
+
+    @Override
     @Async
-    public CompletableFuture<Long> importFromXsl(File file) {
+    public void importFromXsl(File file, Long id) {
+        JobEntity currentJob = jobsRepository.getById(id);
+        currentJob.setStatus("IN PROGRESS");
+        currentJob.setStart(LocalDateTime.now());
+        jobsRepository.save(currentJob);
         HSSFWorkbook workbook;
         try (InputStream inputStream = new FileInputStream(file)) {
             workbook = new HSSFWorkbook(inputStream);
@@ -35,7 +55,7 @@ public class ImportService {
             it.next(); //Skip headers row
 
             while (it.hasNext()) {
-                Sections anotherSections = new Sections();
+                SectionEntity anotherSections = new SectionEntity();
 
                 Row row = it.next();
                 Iterator<Cell> cells = row.iterator();
@@ -51,8 +71,12 @@ public class ImportService {
                 sectionsRepository.save(anotherSections);
             }
         } catch (IOException e) {
+            currentJob.setStatus("ERROR");
+            jobsRepository.save(currentJob);
             e.printStackTrace();
         }
-        return CompletableFuture.completedFuture(Thread.currentThread().getId());
+        currentJob.setStatus("DONE");
+        currentJob.setEnd(LocalDateTime.now());
+        jobsRepository.save(currentJob);
     }
 }

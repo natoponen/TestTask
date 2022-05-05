@@ -1,7 +1,8 @@
 package com.example.test.task.apis.controller;
 
-import com.example.test.task.data.model.Sections;
+import com.example.test.task.data.model.dto.SectionDto;
 import com.example.test.task.data.service.SectionService;
+import com.example.test.task.data.service.SectionsService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,60 +12,41 @@ import java.util.List;
 @RequestMapping("/sections")
 public class SectionController {
 
-    private final SectionService service;
+    private final SectionsService service;
 
     public SectionController(SectionService service) {
         this.service = service;
     }
 
     @GetMapping("")
-    public List<Sections> findAll() {
+    public List<SectionDto> findAll() {
         return service.findAllSections();
     }
 
     @GetMapping("/{id}")
-    public Sections findById(@PathVariable("id") long id) {
+    public SectionDto findById(@PathVariable("id") long id) {
         return service.findById(id);
     }
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/create")
-    public Sections insert(@RequestBody Sections sections) {
-        if (sections != null) {
-            return service.insert(sections);
-        } else {
-            return null;
-        }
+    public void insert(@RequestBody SectionDto sections) {
+        service.insert(sections);
     }
 
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("{id}")
-    public String delete(@PathVariable("id") long id) {
-        if (id > 0) {
-            if (service.delete(id)) {
-                return "Deleted section "+id;
-            } else {
-                return "Cannot delete section "+id;
-            }
-        } else {
-            return "Invalid id";
-        }
+    public boolean delete(@PathVariable("id") long id) {
+        return service.delete(id);
     }
 
     @PutMapping("")
-    public String update(@RequestBody Sections sections) {
-        if (sections != null) {
-            if (service.update(sections)) {
-                return "Updated section "+ sections.getId();
-            } else {
-                return "Unable to update section "+ sections.getId();
-            }
-        } else {
-            return "Request body is empty";
-        }
+    public boolean update(@RequestBody SectionDto section) {
+        return service.update(section);
     }
 
     @GetMapping("/by-code")
-    public List<Sections> sectionsByCode(@RequestParam(value = "code") String code) {
+    public List<SectionDto> sectionsByCode(@RequestParam(value = "code") String code) {
         return service.containGeoClassByCode(code);
     }
 }

@@ -1,26 +1,32 @@
 package com.example.test.task.data.service;
 
-import com.example.test.task.data.model.Sections;
+import com.example.test.task.data.model.dto.SectionDto;
+import com.example.test.task.data.model.entity.SectionEntity;
 
+import java.io.File;
 import java.io.OutputStream;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 public interface SectionsService {
 
-    List<Sections> findAllSections();
+    List<SectionDto> findAllSections();
 
-    Sections findById(long id);
+    SectionDto findById(long id);
 
-    Sections insert(Sections sections);
+    void insert(SectionDto sections);
 
     boolean delete(long id);
 
-    boolean update(Sections sections);
+    boolean update(SectionDto sections);
 
-    List<Sections> containGeoClassByCode(String code);
+    List<SectionDto> containGeoClassByCode(String code);
 
-    CompletableFuture<OutputStream> exportToXls();
+    Long startExport();
+
+    void exportToXls(Long id);
 
     String importExportProgress(Long id);
+
+    File getExportFileById(Long id) throws Exception;
 }

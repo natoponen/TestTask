@@ -1,20 +1,18 @@
-package com.example.test.task.data.model;
+package com.example.test.task.data.model.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.List;
 
 @Entity
-@Table(name = "sections")
-@AllArgsConstructor
-@NoArgsConstructor
 @Getter
 @Setter
-public class Sections {
+@EqualsAndHashCode
+@NoArgsConstructor
+@AllArgsConstructor
+@Table(name = "sections")
+public class SectionEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -25,15 +23,10 @@ public class Sections {
     private String name;
 
     @ElementCollection
-    @CollectionTable(name = "geological class",
+    @CollectionTable(name = "GeologicalClass",
                     joinColumns = @JoinColumn(name="id"))
     private List<GeologicalClass> geologicalClasses;
 
-    @Override
-    public String toString() {
-        return "Section [id="+getId()+", name="+getName()+
-                ", geological classes="+getGeologicalClasses()+"]";
-    }
 
     public void addGeoClass(String name, String code) {
         GeologicalClass geologicalClassToAdd = new GeologicalClass();

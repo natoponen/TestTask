@@ -1,18 +1,16 @@
-package com.example.test.task.data.model;
+package com.example.test.task.data.model.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 
 @Getter
 @Setter
-@AllArgsConstructor
+@EqualsAndHashCode
 @NoArgsConstructor
+@AllArgsConstructor
 @Embeddable
-@Table(name = "geological class")
+@Table(name = "geological_classes")
 public class GeologicalClass {
 
     @Column(name = "name")

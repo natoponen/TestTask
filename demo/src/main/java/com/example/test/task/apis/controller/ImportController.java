@@ -1,7 +1,9 @@
 package com.example.test.task.apis.controller;
 
 import com.example.test.task.data.service.ImportService;
+import com.example.test.task.data.service.ImportingService;
 import com.example.test.task.data.service.SectionService;
+import com.example.test.task.data.service.SectionsService;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,8 +13,8 @@ import java.io.File;
 @RequestMapping("/import")
 public class ImportController {
 
-    private final ImportService importService;
-    private final SectionService sectionService;
+    private final ImportingService importService;
+    private final SectionsService sectionService;
 
     public ImportController(ImportService importService, SectionService sectionService) {
         this.importService = importService;
@@ -22,8 +24,8 @@ public class ImportController {
 
     @PostMapping("")
     public Long importFromXls (@RequestBody File file) {
-        importService.importFromXsl(file);
-        return 0L;
+        Long jobId = importService.startImport(file);
+        return jobId;
     }
 
     @GetMapping("/{id}")
